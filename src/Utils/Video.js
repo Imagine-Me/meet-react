@@ -6,6 +6,18 @@ export const getUserStream = async () => {
         })
         return stream
     }catch(e){
-        console.log(e)
+        console.log("[getUserStream (Video.js)]",e)
     }
 } 
+
+export const initiatePeerConnection = async () => {
+    try{
+        const configuration = {
+            iceServers: [{ urls: 'stun:stun2.1.google.com:19302' }]
+        }
+        const connection = new RTCPeerConnection(configuration)
+        return connection
+    }catch(e){
+        console.log("[initiatePeerConnection (Video.js)",e)
+    }
+}
