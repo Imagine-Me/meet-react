@@ -6,6 +6,8 @@ export const user = atom({
     default: {
         name: "",
         id: "",
-        stream: null
+        db: null,
+        stream: null,
+        link: ""
     }
 })

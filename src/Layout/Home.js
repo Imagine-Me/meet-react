@@ -3,9 +3,13 @@ import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { user } from '../Recoil/User'
 import { getUserStream } from '../Utils/Video'
 
+import { useHistory } from 'react-router'
+
 const Home = (props) => {
 
     const videoRef = useRef(null)
+
+    const history = useHistory()
 
     const userState = useRecoilValue(user);
     const setUserState = useSetRecoilState(user);
@@ -30,6 +34,33 @@ const Home = (props) => {
         }
     }, [])
 
+    const setName = (event) => {
+        setUserState(old => {
+            return {
+                ...old,
+                name: event.target.value
+            }
+        })
+    }
+
+    const submitForm = (event) => {
+        event.preventDefault()
+        const database = userState.db.database()
+        const roomId = database.ref().child('room').push().key
+        const userId = database.ref().child('room').child(roomId).push().key
+        setUserState(old => {
+            return {
+                ...old,
+                link: roomId,
+                id: userId
+            }
+        })
+        const data = {}
+        data[userId] = userState.name
+        database.ref().child('room').child(roomId).set(data)
+        // redirect to the link
+        history.push(roomId)
+    }
 
 
 
@@ -37,8 +68,8 @@ const Home = (props) => {
         <div>
             <h1>React Meet</h1>
             <div className="flex-form-container">
-                <form>
-                    <input type="text" name="name" placeholder="Enter your name" />
+                <form onSubmit={submitForm}>
+                    <input type="text" name="name" placeholder="Enter your name" value={userState.name} onChange={setName} />
                     <button type="submit">Host</button>
                 </form>
                 <div className="VideoContainer">
