@@ -8,6 +8,9 @@ export const user = atom({
         id: "",
         db: null,
         stream: null,
-        link: ""
+        link: "",
+        connection: null,
+        host: false,
+        pc: null
     }
 })
