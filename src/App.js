@@ -2,7 +2,7 @@ import React, { Suspense, useEffect } from 'react';
 import { Switch, Route } from 'react-router'
 import firebase from 'firebase/app'
 import 'firebase/database'
-import { firebaseConfig } from './Utils/Firebase'
+import { firebaseConfig } from './Utils/FirebaseConfig'
 
 import { useSetRecoilState } from 'recoil'
 import { user } from './Recoil/User'
