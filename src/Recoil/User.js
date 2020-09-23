@@ -9,8 +9,9 @@ export const user = atom({
         db: null,
         stream: null,
         link: "",
-        connection: null,
+        offer: null,
         host: false,
-        pc: null
+        pc: null,
+        answer: null
     }
 })

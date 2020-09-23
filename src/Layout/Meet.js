@@ -1,101 +1,81 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
-import { useSetRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { user } from '../Recoil/User'
+
+import { initiatePeerConnection, createOffer, answerOffer } from '../Utils/Video'
+
+
+
 import { withRouter, useHistory } from 'react-router'
 
 
-import { initiatePeerConnection, getUserStream, createOffer } from '../Utils/Video'
-
-import { user } from '../Recoil/User'
 
 const Meet = (props) => {
-
-    const userState = useRecoilValue(user)
     const localVideo = useRef(null)
-    const setUserState = useSetRecoilState(user)
+    const remoteVideo = useRef(null)
+
+
+    const setUserData = useSetRecoilState(user)
+    const userData = useRecoilValue(user)
 
     const history = useHistory()
 
     useEffect(() => {
-        if (userState.name === "") {
-            setUserState(old => {
-                return {
-                    ...old,
-                    link: props.match.params.link
-                }
-            })
+        // IF THE SECOND USER COMES MOVE TO HOME LINK FOR REGISTERING NAME
+        if (userData.name === "") {
             history.push({
-                pathname: '/',
-                search: "type=join"
+                pathname: "/",
+                search: 'link'
             })
             return
         }
 
-        if (userState.stream == null) {
-            const getUserStreamData = async () => {
-                const stream = await getUserStream()
-                localVideo.current.srcObject = stream
-                setUserState(old => {
-                    return {
-                        ...old,
-                        stream,
-                        link: props.match.params.link
-                    }
-                })
+        // CREATING PEER CONNECTION
+        const pc = initiatePeerConnection()
+
+        setUserData(old => {
+            return {
+                ...old,
+                pc
             }
-            getUserStreamData()
-        } else {
-            console.log("this sonewf")
-            localVideo.current.srcObject = userState.stream
-        }
+        })
 
 
-        const connection = async () => {
-            const pc = await initiatePeerConnection()
-            setUserState(old => {
-                return {
-                    ...old,
-                    pc
-                }
-            })
-            pc.onicecandidate = (e) => {
-                if (e.candidate) console.log(JSON.stringify(e.candidate))
-                else console.log("error")
-            }
-            pc.oniceconnectionstatechange = (e) => {
-                console.log(e)
-            }
-            pc.addEventListener("track", e => {
-                console.log("new  Connection")
-            })
-            for (const track of userState.stream.getTracks()) {
-                pc.addTrack(track);
-            }
 
 
-        }
-        connection()
-        return () => {
-
-        }
     }, [])
 
+
     useEffect(() => {
-        if (userState.pc !== null) {
-            if (userState.host) {
-                console.log("creating offer")
-                createOffer(userState.pc, userState.db, userState.link)
-            }else{
+        if (userData.pc !== null) {
+            const database = userData.db.database()
+            if (userData.host) {
+                userData.pc.onicecandidate = (e) => {
+                    if (e.candidate) {
+                        const key = database.ref().child('room').child(userData.link).child('candidate').push().key
+                        const data = {}
+                        data[key] = e.candidate
+                        database.ref().child('room').child(userData.link).child('candidate').update(data)
+                    }
+                }
+
+                // CREATING OFFER
+                createOffer(userData.pc, userData.db, userData.link)
+
+            } else {
+                
+                answerOffer()
             }
         }
-        return () => {
 
-        }
-    }, [userState.pc])
+    }, [userData.pc])
+
 
     return (
         <>
             <video ref={localVideo} autoPlay></video>
+            <video ref={remoteVideo} autoPlay></video>
         </>
     );
 }

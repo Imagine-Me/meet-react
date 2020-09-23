@@ -26,8 +26,7 @@ const Home = (props) => {
             setUserState(old => {
                 return {
                     ...old,
-                    stream,
-                    host: true
+                    stream
                 }
             })
         }
@@ -70,7 +69,8 @@ const Home = (props) => {
                 return {
                     ...old,
                     link: roomId,
-                    id: userId
+                    id: userId,
+                    host: true
                 }
             })
             const data = {}
