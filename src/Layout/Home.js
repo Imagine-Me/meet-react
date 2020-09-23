@@ -84,7 +84,7 @@ const Home = (props) => {
 
 
     return (
-        <div>
+        <div className="padding">
             <h1>React Meet</h1>
             <div className="flex-form-container">
                 <form onSubmit={submitForm}>
