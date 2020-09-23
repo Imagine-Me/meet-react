@@ -50,7 +50,7 @@ const Home = (props) => {
         event.preventDefault()
         const database = userState.db.database()
         if (type) {
-            const userId = database.ref().child('room').child(userState.link).push().key
+            const userId = database.ref().child('room').push().key
             setUserState(old => {
                 return {
                     ...old,

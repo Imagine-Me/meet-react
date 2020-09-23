@@ -23,7 +23,7 @@ export const initiatePeerConnection = () => {
 }
 
 export const createOffer = (pc, db, link) => {
-    pc.createOffer({ offerToReceiveVideo: 1 })
+    return pc.createOffer({ offerToReceiveVideo: 1 })
         .then(sdp => {
             return pc.setLocalDescription(sdp)
         })
@@ -35,7 +35,36 @@ export const createOffer = (pc, db, link) => {
         })
 }
 
+export const addRemoteDescription = (pc, db, sdp, link = null, host = false) => {
+    console.log("ADDING REMOTE DESCRIPTION.....")
+    pc.setRemoteDescription(new RTCSessionDescription(sdp))
+    if (host) {
+        const database = db.database()
+        database.ref().child('room').child(link).update({
+            candidateState: true
+        })
+    }
+}
 
-export const answerOffer = () => {
 
+export const answerOffer = (pc, db, link) => {
+    console.log("CREATING ANSWER......")
+    pc.createAnswer({ offerToReceiveVideo: 1 })
+        .then(sdp => {
+            pc.setLocalDescription(sdp)
+        })
+        .then(() => {
+            const database = db.database()
+            database.ref().child('room').child(link).update({
+                answer: pc.localDescription
+            })
+        })
+}
+
+
+export const addICECandidate = (pc, candidate) => {
+    console.log("ADDING ICE CANDIDATE..")
+    for (const key in candidate) {
+        pc.addIceCandidate(new RTCIceCandidate(candidate[key]))
+    }
 }
