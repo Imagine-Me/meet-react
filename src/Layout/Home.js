@@ -92,7 +92,7 @@ const Home = (props) => {
                     <button type="submit">{type ? 'Join' : 'Host'}</button>
                 </form>
                 <div className="VideoContainer">
-                    <video ref={videoRef} autoPlay playsInline>
+                    <video ref={videoRef} autoPlay playsInline muted>
 
                     </video>
                 </div>

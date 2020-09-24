@@ -141,7 +141,7 @@ const Meet = (props) => {
 
     return (
         <div className="Meet">
-            <video ref={localVideo} autoPlay></video>
+            <video ref={localVideo} autoPlay muted></video>
             <video ref={remoteVideo} autoPlay></video>
         </div>
     );

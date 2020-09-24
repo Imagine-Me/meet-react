@@ -13,7 +13,9 @@
 
 #firebase
 /src/Utils/FirebaseConfig.js
-
+/.firebase
+/firebase.json
+/.firebaserc
 # misc
 .DS_Store
 .env.local
