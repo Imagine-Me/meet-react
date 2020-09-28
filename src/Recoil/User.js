@@ -13,6 +13,7 @@ export const user = atom({
         host: false,
         pc: null,
         answer: null,
-        candidate: null
+        candidate: null,
+        client: ""
     }
 })

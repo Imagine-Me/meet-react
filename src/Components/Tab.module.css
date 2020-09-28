@@ -1,0 +1,20 @@
+.Tab{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.IconOut{
+    padding: 10px;
+    border-radius: 50%;
+    border: 1px solid rgb(211, 211, 211);
+    margin: 0 10px;
+}
+.IconOut:hover{
+    cursor: pointer;
+}

@@ -3,6 +3,8 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 import { user } from '../Recoil/User'
 
+import Tab from '../Components/Tab'
+
 import { initiatePeerConnection, createOffer, answerOffer, addRemoteDescription, getUserStream, addICECandidate } from '../Utils/Video'
 import { readData } from '../Utils/Firebase'
 
@@ -76,7 +78,7 @@ const Meet = (props) => {
                     }
                 }
                 userData.pc.ontrack = (e) => {
-                    console.log("THERE IS AN INCOMING STREAM",e);
+                    console.log("THERE IS AN INCOMING STREAM", e);
                     remoteVideo.current.srcObject = e.streams[0]
                 }
 
@@ -91,6 +93,20 @@ const Meet = (props) => {
                         if (userData.pc.remoteDescription === null || userData.pc.remoteDescription === undefined)
                             addRemoteDescription(userData.pc, userData.db, value.answer, userData.link, true)
                     }
+                    if (value !== null && value !== undefined && userData.client === "") {
+                        const users = value.users
+                        console.log("USERS ",users,userData.id)
+                        for(const key in users){
+                            if(key !== userData.id){
+                                setUserData(old=>({
+                                    ...old,
+                                    client: users[key]
+                                }))
+                                break
+                            }
+                        }
+                    }
+
                 })
 
             } else {
@@ -141,8 +157,15 @@ const Meet = (props) => {
 
     return (
         <div className="Meet">
-            <video ref={localVideo} autoPlay muted></video>
-            <video ref={remoteVideo} autoPlay></video>
+            <div className="VideoDiv">
+                <div className="user-name">{userData.name}</div>
+                <video ref={localVideo} autoPlay muted></video>
+            </div>
+            <div className="VideoDiv">
+                <div className="user-name">{userData.client}</div>
+                <video ref={remoteVideo} autoPlay></video>
+            </div>
+            <Tab />
         </div>
     );
 }
