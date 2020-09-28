@@ -145,6 +145,19 @@ const Meet = (props) => {
                         if (value !== null && value !== undefined && value.candidateState) {
                             addICECandidate(userData.pc, data.candidate)
                         }
+                        if (value !== null && value !== undefined && userData.client === "") {
+                            const users = value.users
+                            console.log("USERS ",users,userData.id)
+                            for(const key in users){
+                                if(key !== userData.id){
+                                    setUserData(old=>({
+                                        ...old,
+                                        client: users[key]
+                                    }))
+                                    break
+                                }
+                            }
+                        }
                     })
                 }
 
