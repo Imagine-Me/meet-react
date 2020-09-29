@@ -14,6 +14,10 @@ export const user = atom({
         pc: null,
         answer: null,
         candidate: null,
-        client: ""
+        client: "",
+        constraints: {
+            audio: true,
+            video: true
+        }
     }
 })

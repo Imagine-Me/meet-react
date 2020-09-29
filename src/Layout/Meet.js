@@ -95,10 +95,10 @@ const Meet = (props) => {
                     }
                     if (value !== null && value !== undefined && userData.client === "") {
                         const users = value.users
-                        console.log("USERS ",users,userData.id)
-                        for(const key in users){
-                            if(key !== userData.id){
-                                setUserData(old=>({
+                        console.log("USERS ", users, userData.id)
+                        for (const key in users) {
+                            if (key !== userData.id) {
+                                setUserData(old => ({
                                     ...old,
                                     client: users[key]
                                 }))
@@ -114,7 +114,7 @@ const Meet = (props) => {
 
                 const getOffer = async () => {
                     // GET STREAM
-                    const stream = await getUserStream()
+                    const stream = await getUserStream(userData.constraints)
 
                     setUserData(old => {
                         return {
@@ -123,9 +123,9 @@ const Meet = (props) => {
                         }
                     })
 
-                    localVideo.current.srcObject = stream
+                    localVideo.current.srcObject = userData.stream
 
-                    stream.getTracks().forEach(track => userData.pc.addTrack(track, stream));
+                    userData.stream.getTracks().forEach(track => userData.pc.addTrack(track, stream));
                     userData.pc.ontrack = (e) => {
                         remoteVideo.current.srcObject = e.streams[0]
                     }
@@ -147,10 +147,10 @@ const Meet = (props) => {
                         }
                         if (value !== null && value !== undefined && userData.client === "") {
                             const users = value.users
-                            console.log("USERS ",users,userData.id)
-                            for(const key in users){
-                                if(key !== userData.id){
-                                    setUserData(old=>({
+                            console.log("USERS ", users, userData.id)
+                            for (const key in users) {
+                                if (key !== userData.id) {
+                                    setUserData(old => ({
                                         ...old,
                                         client: users[key]
                                     }))
@@ -167,6 +167,41 @@ const Meet = (props) => {
 
     }, [userData.pc])
 
+    
+
+
+    const handleConstraints = (type) => {
+        const constraints = { ...userData.constraints }
+        if (type === "audio") {
+            constraints.audio = !constraints.audio
+        } else {
+            constraints.video = !constraints.video
+        }
+
+        setUserData(old => ({
+            ...old,
+            constraints
+        }))
+        changeStream()
+    }
+
+    const changeStream = async () => {
+        const d = {
+            audio: true,
+            video: false
+        }
+        const stream = await getUserStream(d)
+        console.log("STREAM CHANGED..", userData)
+        setUserData(old => {
+            return {
+                ...old,
+                stream
+            }
+        })
+        localVideo.current.srcObject=stream
+    }
+
+
 
     return (
         <div className="Meet">
@@ -178,7 +213,7 @@ const Meet = (props) => {
                 <div className="user-name">{userData.client}</div>
                 <video ref={remoteVideo} autoPlay></video>
             </div>
-            <Tab />
+            <Tab change={handleConstraints} audio={userData.constraints.audio} video={userData.constraints.video} />
         </div>
     );
 }

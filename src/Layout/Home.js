@@ -21,7 +21,7 @@ const Home = (props) => {
 
     useEffect(() => {
         const streamData = async () => {
-            const stream = await getUserStream()
+            const stream = await getUserStream(userState.constraints)
             videoRef.current.srcObject = stream
             setUserState(old => {
                 return {
