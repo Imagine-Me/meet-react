@@ -62,6 +62,12 @@ const Meet = (props) => {
             const database = userData.db.database()
 
 
+            userData.pc.oniceconnectionstatechange = () => {
+                if (userData.pc.iceConnectionState == 'disconnected') {
+                    remoteVideo.current.srcObject = null
+                }
+            }
+
 
             if (userData.host) {
                 // ADDING STREAM TO LOCAL
@@ -167,41 +173,13 @@ const Meet = (props) => {
 
     }, [userData.pc])
 
-    
 
 
-    const handleConstraints = (type) => {
-        const constraints = { ...userData.constraints }
-        if (type === "audio") {
-            constraints.audio = !constraints.audio
-        } else {
-            constraints.video = !constraints.video
-        }
 
-        setUserData(old => ({
-            ...old,
-            constraints
-        }))
-        changeStream()
+    const handleConstraints = () => {
+        userData.pc.close()
+        history.push("/")
     }
-
-    const changeStream = async () => {
-        const d = {
-            audio: true,
-            video: false
-        }
-        const stream = await getUserStream(d)
-        console.log("STREAM CHANGED..", userData)
-        setUserData(old => {
-            return {
-                ...old,
-                stream
-            }
-        })
-        localVideo.current.srcObject=stream
-    }
-
-
 
     return (
         <div className="Meet">
@@ -213,7 +191,7 @@ const Meet = (props) => {
                 <div className="user-name">{userData.client}</div>
                 <video ref={remoteVideo} autoPlay></video>
             </div>
-            <Tab change={handleConstraints} audio={userData.constraints.audio} video={userData.constraints.video} />
+            <Tab change={handleConstraints} />
         </div>
     );
 }
