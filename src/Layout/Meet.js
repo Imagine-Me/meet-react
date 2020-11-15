@@ -25,7 +25,7 @@ const Meet = (props) => {
 
     useEffect(() => {
         // IF THE SECOND USER COMES MOVE TO HOME LINK FOR REGISTERING NAME
-        if (userData.name === "") {
+        if (userData.email === "") {
             setUserData(old => {
                 return {
                     ...old,
@@ -59,7 +59,7 @@ const Meet = (props) => {
         if (userData.pc !== null) {
 
 
-            const database = userData.db.database()
+            const database = userData.firebase.database()
 
 
             userData.pc.oniceconnectionstatechange = () => {
@@ -90,14 +90,14 @@ const Meet = (props) => {
 
 
                 // CREATING OFFER
-                userData.pc.onnegotiationneeded = createOffer(userData.pc, userData.db, userData.link)
+                userData.pc.onnegotiationneeded = createOffer(userData.pc, userData.firebase, userData.link)
 
                 // ADD REMOTE DESCRIPTION
                 database.ref().child('room').child(userData.link).on('value', snapshot => {
                     const value = snapshot.val()
                     if (value !== null && value !== undefined && value.answer !== undefined) {
                         if (userData.pc.remoteDescription === null || userData.pc.remoteDescription === undefined)
-                            addRemoteDescription(userData.pc, userData.db, value.answer, userData.link, true)
+                            addRemoteDescription(userData.pc, userData.firebase, value.answer, userData.link, true)
                     }
                     if (value !== null && value !== undefined && userData.client === "") {
                         const users = value.users
@@ -121,7 +121,7 @@ const Meet = (props) => {
                 const getOffer = async () => {
                     // GET STREAM
                     const stream = await getUserStream(userData.constraints)
-
+                    debugger
                     setUserData(old => {
                         return {
                             ...old,
@@ -136,7 +136,7 @@ const Meet = (props) => {
                         remoteVideo.current.srcObject = e.streams[0]
                     }
 
-                    const data = await readData(userData.db, userData.link)
+                    const data = await readData(userData.firebase, userData.link)
                     setUserData(old => {
                         return {
                             ...old,
@@ -144,8 +144,8 @@ const Meet = (props) => {
                         }
                     })
                     const offer = data.offer
-                    addRemoteDescription(userData.pc, userData.db, offer)
-                    answerOffer(userData.pc, userData.db, userData.link)
+                    addRemoteDescription(userData.pc, userData.firebase, offer)
+                    answerOffer(userData.pc, userData.firebase, userData.link)
                     database.ref().child('room').child(userData.link).on('value', snapshot => {
                         const value = snapshot.val()
                         if (value !== null && value !== undefined && value.candidateState) {
@@ -153,7 +153,6 @@ const Meet = (props) => {
                         }
                         if (value !== null && value !== undefined && userData.client === "") {
                             const users = value.users
-                            console.log("USERS ", users, userData.id)
                             for (const key in users) {
                                 if (key !== userData.id) {
                                     setUserData(old => ({
@@ -184,7 +183,7 @@ const Meet = (props) => {
     return (
         <div className="Meet">
             <div className="VideoDiv">
-                <div className="user-name">{userData.name}</div>
+                <div className="user-name">{userData.email}</div>
                 <video ref={localVideo} autoPlay muted></video>
             </div>
             <div className="VideoDiv">

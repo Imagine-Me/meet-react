@@ -72,6 +72,10 @@ const Home = (props) => {
         if (userState.firebase !== null) {
             userState.firebase.auth().onAuthStateChanged((user) => {
                 if (user != null) {
+                    setUserState(old=>({
+                        ...old,
+                        email: userState.firebase.auth().currentUser.email
+                    }))
                     setUserStat(true)
                 }
                 else {
@@ -132,6 +136,7 @@ const Home = (props) => {
         const database = userState.firebase.database()
         
         if (type) {
+            console.log(userState.firebase.auth().currentUser.id)
             const userId = database.ref().child('room').push().key
             setUserState(old => {
                 return {
@@ -140,7 +145,7 @@ const Home = (props) => {
                 }
             })
             const data = {}
-            data[userId] = userState.name
+            data[userId] = userState.email
             database.ref().child('room').child(userState.link).child('users').update(data)
             history.push(userState.link)
         } else {
