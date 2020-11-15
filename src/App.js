@@ -1,6 +1,6 @@
 import React, { Suspense, useEffect } from 'react';
 import { Switch, Route } from 'react-router'
-import firebase from 'firebase/app'
+import Firebase from 'firebase'
 import 'firebase/database'
 import { firebaseConfig } from './Utils/FirebaseConfig'
 
@@ -19,12 +19,12 @@ function App() {
 
   useEffect(() => {
 
-    const database = firebase.apps && firebase.apps.length > 0 ? firebase.apps[0] : firebase.initializeApp(firebaseConfig)
+    const firebase = Firebase.apps && Firebase.apps.length > 0 ? Firebase.apps[0] : Firebase.initializeApp(firebaseConfig)
 
     setUserState(old=>{
       return{
         ...old,
-        db: database
+        firebase
       }
     })
 
