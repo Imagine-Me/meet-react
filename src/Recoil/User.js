@@ -4,9 +4,10 @@ import { atom } from 'recoil'
 export const user = atom({
     key: "user",
     default: {
-        name: "",
+        email: "",
+        password: "",
         id: "",
-        db: null,
+        firebase: null,
         stream: null,
         link: "",
         offer: null,
